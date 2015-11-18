@@ -8,16 +8,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 public class MainActivity extends AppCompatActivity {
 
-    private Boolean loginIn = false;
+    private Boolean login = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // The 3 lines below are to initialize Parse
+        // Enable Local Datastore.
+        Parse.enableLocalDatastore(this);
+        Parse.initialize(this, "icLRaWe8n7wy46STg3LubL3EliVC56yGYJF4lqgZ", "29QxzODPy3epUmInINvCBSvwwbvj4PdQx2bcefKS");
+
+        ParseObject testObject = new ParseObject("TestObject");
+        testObject.put("foo", "bar");
+        testObject.saveInBackground();
 
         // TODO - get updated location???
-        if(loginIn){
+        if(login){
             // TODO - redirect to home if the user is already logged in
         }else{
             setContentView(R.layout.activity_main);
