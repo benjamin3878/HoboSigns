@@ -26,6 +26,10 @@
             android:label="@string/app_name"
             android:name=".Login"
             />
+        <activity
+            android:label="@string/app_name"
+            android:name=".Home"
+            />
 
     </application>
 
