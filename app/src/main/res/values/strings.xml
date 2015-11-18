@@ -8,5 +8,11 @@
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="join">Join</string>
+    <string name="user_name_must_be_at_least">User name must be at least</string>
+    <string name="characters_long">characters long</string>
+    <string name="password_must_be_at_least">Password must be at least</string>
+    <string name="username_must_be_less_than">Username must be less than</string>
+    <string name="password_must_be_less_than">Password must be less than</string>
+    <string name="password_and_confirm_password_must_be_equal">Password and Confirm Password must be equal</string>
 
 </resources>

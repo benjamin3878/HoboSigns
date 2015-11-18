@@ -23,9 +23,9 @@ public class MainActivity extends AppCompatActivity {
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "icLRaWe8n7wy46STg3LubL3EliVC56yGYJF4lqgZ", "29QxzODPy3epUmInINvCBSvwwbvj4PdQx2bcefKS");
 
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
+//        ParseObject testObject = new ParseObject("TestObject");
+//        testObject.put("foo", "bar");
+//        testObject.saveInBackground();
 
         // TODO - get updated location???
         if(login){
