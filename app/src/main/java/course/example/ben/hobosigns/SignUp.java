@@ -1,5 +1,6 @@
 package course.example.ben.hobosigns;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -28,6 +29,9 @@ public class SignUp extends AppCompatActivity {
                 //else submit to database
 
                 //TODO - redirect to home if submit completed
+                //TODO - make this redirect dependent on signup db call
+                Intent intent = new Intent(v.getContext(), Home.class);
+                startActivity(intent);
             }
         });
     }
