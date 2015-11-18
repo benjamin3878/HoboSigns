@@ -13,4 +13,12 @@
         android:id="@+id/textView7"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.20" />
+
+    <Button
+        android:layout_width="143dp"
+        android:layout_height="wrap_content"
+        android:text="Log out"
+        android:id="@+id/logOutButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.05" />
 </LinearLayout>

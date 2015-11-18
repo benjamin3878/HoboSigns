@@ -10,10 +10,9 @@ import android.widget.Button;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
-
-    private Boolean login = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,38 +20,36 @@ public class MainActivity extends AppCompatActivity {
         // The 3 lines below are to initialize Parse
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "icLRaWe8n7wy46STg3LubL3EliVC56yGYJF4lqgZ", "29QxzODPy3epUmInINvCBSvwwbvj4PdQx2bcefKS");
+        Parse.initialize(this, "icLRaWe8n7wy46STg3LubL3EliVC56yGYJF4lqgZ",
+                "29QxzODPy3epUmInINvCBSvwwbvj4PdQx2bcefKS");
 
-//        ParseObject testObject = new ParseObject("TestObject");
-//        testObject.put("foo", "bar");
-//        testObject.saveInBackground();
-
-        // TODO - get updated location???
-        if(login){
-            // TODO - redirect to home if the user is already logged in
+        // Check if user is logged in
+        if (ParseUser.getCurrentUser() != null) {
+            // Start an intent for the logged in activity
+            startActivity(new Intent(this, Home.class));
         }else{
-            setContentView(R.layout.activity_main);
+            startActivity(new Intent(this, WelcomeScreen.class));
+//            setContentView(R.layout.activity_main);
+
+//            Button loginButton = (Button) findViewById(R.id.login);
+//            Button signUpButton = (Button) findViewById(R.id.sign_up);
+//
+//            loginButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(v.getContext(), Login.class);
+//                    startActivity(intent);
+//                }
+//            });
+//
+//            signUpButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(v.getContext(), SignUp.class);
+//                    startActivity(intent);
+//                }
+//            });
         }
-
-        Button loginButton = (Button) findViewById(R.id.login);
-        Button signUpButton = (Button) findViewById(R.id.sign_up);
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), Login.class);
-                startActivity(intent);
-            }
-        });
-
-        signUpButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(v.getContext(), SignUp.class);
-                startActivity(intent);
-            }
-        });
-
     }
 
     @Override
