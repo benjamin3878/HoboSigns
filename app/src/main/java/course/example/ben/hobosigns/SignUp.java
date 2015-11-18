@@ -32,6 +32,7 @@ public class SignUp extends AppCompatActivity {
                 //TODO - make this redirect dependent on signup db call
                 Intent intent = new Intent(v.getContext(), Home.class);
                 startActivity(intent);
+
             }
         });
     }
