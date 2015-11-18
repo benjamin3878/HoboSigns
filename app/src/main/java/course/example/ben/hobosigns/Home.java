@@ -22,6 +22,8 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
+        // Todo - Change this button
+        // maybe put it in a menu or move it to a better location
         Button logOutButton = (Button) findViewById(R.id.logOutButton);
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +34,8 @@ public class Home extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
     }
 
 
