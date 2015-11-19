@@ -29,26 +29,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, Home.class));
         }else{
             startActivity(new Intent(this, WelcomeScreen.class));
-//            setContentView(R.layout.activity_main);
-
-//            Button loginButton = (Button) findViewById(R.id.login);
-//            Button signUpButton = (Button) findViewById(R.id.sign_up);
-//
-//            loginButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent(v.getContext(), Login.class);
-//                    startActivity(intent);
-//                }
-//            });
-//
-//            signUpButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent(v.getContext(), SignUp.class);
-//                    startActivity(intent);
-//                }
-//            });
         }
     }
 
