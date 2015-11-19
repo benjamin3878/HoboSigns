@@ -43,9 +43,6 @@ public class SignUp extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //TODO - redirect to home if submit completed
-                //TODO - make this redirect dependent on signup db call
                 signUp();
             }
         });

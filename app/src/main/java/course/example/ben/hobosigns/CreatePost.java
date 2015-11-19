@@ -6,17 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import com.parse.ParseUser;
 
 /**
- * Created by Ben on 11/17/2015.
- * Home is the main interaction with a user.
- * The user will view post of other user in the area via map or list mode
+ * Created by Ben on 11/19/2015.
  */
-public class Home extends AppCompatActivity {
+public class CreatePost extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -38,31 +34,16 @@ public class Home extends AppCompatActivity {
         }
     }
 
-    private void logOut(){
-        ParseUser.logOut();
-        Intent intent = new Intent(Home.this, WelcomeScreen.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home);
-
-        Button newPostButton = (Button) findViewById(R.id.button_new_post);
-        newPostButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Home.this, CreatePost.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
-
+        setContentView(R.layout.create_post);
     }
 
-
-
-
+    private void logOut(){
+        ParseUser.logOut();
+        Intent intent = new Intent(CreatePost.this, WelcomeScreen.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 }
