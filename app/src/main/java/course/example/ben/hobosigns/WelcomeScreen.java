@@ -12,7 +12,7 @@ import com.parse.ParseUser;
  * Created by Ben on 11/18/2015.
  */
 public class WelcomeScreen extends AppCompatActivity {
-
+    //hello
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
