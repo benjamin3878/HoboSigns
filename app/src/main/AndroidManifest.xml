@@ -37,6 +37,10 @@
             android:label="@string/app_name"
             android:name=".CreatePost"
             />
+        <activity
+            android:label="@string/app_name"
+            android:name=".WelcomeScreen"
+            />
 
     </application>
 
