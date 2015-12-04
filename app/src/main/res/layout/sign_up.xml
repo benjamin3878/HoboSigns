@@ -2,52 +2,62 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/green">
+    android:background="@drawable/citynight_720"
+    android:paddingTop="24dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/user_name"
-        android:id="@+id/textView2" />
+        android:id="@+id/textView2"
+        android:textColor="#ffffff"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/signupUserName" />
+        android:id="@+id/signupUserName"
+        android:textColor="#ffffff"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/password"
-        android:id="@+id/textView3" />
+        android:id="@+id/textView3"
+        android:textColor="#ffffff"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
-        android:id="@+id/signupPassword" />
+        android:id="@+id/signupPassword"
+        android:textColor="#ffffff"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/confirm_password"
-        android:id="@+id/textView4" />
+        android:id="@+id/textView4"
+        android:textColor="#ffffff"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
-        android:id="@+id/signupConfirmPassword" />
+        android:id="@+id/signupConfirmPassword"
+        android:textColor="#ffffff"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/join"
-        android:id="@+id/join" />
+        android:id="@+id/join"/>
 
 </LinearLayout>
