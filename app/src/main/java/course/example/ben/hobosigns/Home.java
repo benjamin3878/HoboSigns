@@ -37,8 +37,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
+import com.parse.FindCallback;
+import com.parse.ParseQuery;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Ben on 11/17/2015.
@@ -49,6 +55,8 @@ public class Home  extends FragmentActivity implements OnMapReadyCallback {
     private SupportMapFragment mapFragment;
     private LocationRequest locationRequest;
     private String TAG = "Testing";
+
+    private final Map<String, Marker> mapMarkers = new HashMap<String, Marker>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,9 +123,54 @@ public class Home  extends FragmentActivity implements OnMapReadyCallback {
         map.addMarker(new MarkerOptions().position(test).title("Test 1").icon(icon1));
         map.moveCamera(CameraUpdateFactory.newLatLng(collegePark));
         map.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
+        doMapQuery();
     }
 
+    /*
+   * Set up the query to update the map view
+   */
+    private void doMapQuery() {
+        //Since we can't grab gps coords
+        Location mLocation = new Location("College Park");
+        mLocation.setLatitude(38.99);
+        mLocation.setLongitude(-76.82);
+        final ParseGeoPoint myPoint = new ParseGeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
+        // Create the map Parse query
+        ParseQuery<HoboSignsPost> mapQuery = HoboSignsPost.getQuery();
+        // Set up additional query filters
+        /*
+        mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
+        mapQuery.include("user");
+        mapQuery.orderByDescending("createdAt");
+        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+        */
+        // Kick off the query in the background
+        Log.i(TAG, "WE GOT HERE");
+        mapQuery.findInBackground(new FindCallback<HoboSignsPost>() {
+            @Override
+            public void done(List<HoboSignsPost> objects, ParseException e) {
+                Log.i(TAG, "DONE");
+                if (e != null) {
+                    Log.i(TAG, "An error occurred while querying for map posts.", e);
+                    return;
+                }
+                // Posts to show on the map
+                Set<String> toKeep = new HashSet<String>();
+                // Loop through the results of the search
+                for (HoboSignsPost post : objects) {
+                    // Add this post to the list of map pins to keep
+                    toKeep.add(post.getObjectId());
+                    // Check for an existing marker for this post
+                    Marker oldMarker = mapMarkers.get(post.getObjectId());
+                    // Set up the map marker's location
+                    MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude()));
+                    // Add a new marker
+                    Marker marker = mapFragment.getMap().addMarker(markerOpts);
+            }
+        }
+    });
 
+    }
 
 
 

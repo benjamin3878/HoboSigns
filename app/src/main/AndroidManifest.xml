@@ -54,10 +54,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCAY_L4wxmtiBu7QmaQY26pzTM2Re8go1U" />
 
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" >
-        </activity>
     </application>
 
 </manifest>
