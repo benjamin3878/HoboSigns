@@ -16,5 +16,6 @@
     <string name="password_and_confirm_password_must_be_equal">Password and Confirm Password must be equal</string>
     <string name="log_out">Log Out</string>
     <string name="new_post_button">+</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>
