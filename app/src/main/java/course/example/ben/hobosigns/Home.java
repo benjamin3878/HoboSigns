@@ -103,8 +103,6 @@ public class Home  extends FragmentActivity implements OnMapReadyCallback {
     }
 
 
-
-
     @Override
     public void onMapReady(GoogleMap map) {
         LatLng collegePark = new LatLng(38.99, -76.92);
