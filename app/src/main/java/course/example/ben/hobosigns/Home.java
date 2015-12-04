@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -51,7 +52,7 @@ import java.util.Set;
  * Home is the main interaction with a user.
  * The user will view post of other user in the area via map or list mode
  */
-public class Home  extends FragmentActivity implements OnMapReadyCallback {
+public class Home  extends AppCompatActivity implements OnMapReadyCallback {
     private SupportMapFragment mapFragment;
     private LocationRequest locationRequest;
     private String TAG = "Testing";
@@ -70,7 +71,7 @@ public class Home  extends FragmentActivity implements OnMapReadyCallback {
                 Intent intent = new Intent(Home.this, CreatePost.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
 
@@ -88,7 +89,7 @@ public class Home  extends FragmentActivity implements OnMapReadyCallback {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -164,6 +165,7 @@ public class Home  extends FragmentActivity implements OnMapReadyCallback {
                     Marker oldMarker = mapMarkers.get(post.getObjectId());
                     // Set up the map marker's location
                     MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude()));
+                    //BitmapDescriptorFactory.fromBitmap();
                     // Add a new marker
                     Marker marker = mapFragment.getMap().addMarker(markerOpts);
             }
@@ -171,6 +173,7 @@ public class Home  extends FragmentActivity implements OnMapReadyCallback {
     });
 
     }
+
 
 
 

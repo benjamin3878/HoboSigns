@@ -26,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
         // Check if user is logged in
         if (ParseUser.getCurrentUser() != null) {
             // Start an intent for the logged in activity
-            startActivity(new Intent(this, Home.class));
+            Intent i = new Intent(this, Home.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(i);
         }else{
             startActivity(new Intent(this, WelcomeScreen.class));
         }
