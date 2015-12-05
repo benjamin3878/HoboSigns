@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -111,17 +112,29 @@ public class Home  extends AppCompatActivity implements OnMapReadyCallback {
         startActivity(intent);
     }
 
+    private LatLng generate() {
+        Random rn = new Random();
+        float xDis = rn.nextFloat()/100;
+        float yDis = rn.nextFloat()/100;
+        Log.i(TAG, "GEN X: " + xDis);
+        Log.i(TAG, "GEN Y: " + yDis);
+        return new LatLng(38.99 + xDis, -76.95 + yDis);
+    }
+
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng collegePark = new LatLng(38.99, -77.00);
+        LatLng collegePark = new LatLng(38.99, -76.95);
         LatLng test = new LatLng(38.99, -76.82);
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.test);
-        BitmapDescriptor icon1 = BitmapDescriptorFactory.fromResource(R.drawable.test1);
-        map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker").icon(icon));
-        map.addMarker(new MarkerOptions().position(test).title("Test 1").icon(icon1));
+        //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.test);
+        //BitmapDescriptor icon1 = BitmapDescriptorFactory.fromResource(R.drawable.test1);
+        map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
+        map.addMarker(new MarkerOptions().position(test).title("Test 1"));//.icon(icon1));
+        for(int i = 0; i < 10; i ++) {
+            map.addMarker(new MarkerOptions().position(generate()).title("generate"));
+        }
         map.moveCamera(CameraUpdateFactory.newLatLng(collegePark));
-        map.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
+        map.animateCamera(CameraUpdateFactory.zoomTo(10.0f));
         doMapQuery();
     }
 
