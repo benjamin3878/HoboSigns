@@ -18,38 +18,4 @@
         <!--android:layout_gravity="center_horizontal"-->
         <!--android:layout_weight="0.08" />-->
 
-    <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/imageView"
-        
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="bottom"
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="10dp">
-
-        <Button
-            android:layout_width="85dp"
-            android:layout_height="74dp"
-            android:background = "@drawable/black_slr_camera_256"
-            android:id="@+id/camera_button"
-            android:layout_gravity="right" />
-
-        <!--<Button-->
-            <!--android:layout_width="67dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/new_post_button"-->
-            <!--android:textSize="40dp"-->
-            <!--android:background = "@drawable/round_button"-->
-            <!--android:id="@+id/button_new_post"-->
-            <!--android:layout_gravity="right" />-->
-        </LinearLayout>
 </RelativeLayout >
