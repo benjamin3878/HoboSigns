@@ -8,39 +8,41 @@
     android:paddingRight="16dp"
     android:paddingBottom="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/user_name"
-        android:id="@+id/textView5"
-        android:textColor="#ffffff"/>
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_marginTop="150dp"
+        android:layout_gravity="center"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:id="@+id/loginUserName"
-        android:textColor="#ffffff"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/password"
-        android:id="@+id/textView6"
-        android:textColor="#ffffff"/>
+        android:textColor="#ffffff"
+        android:hint="user name"
+        android:textColorHint="#fff"
+        android:gravity="center"/>
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/loginPassword"
-        android:textColor="#ffffff"/>
+        android:textColor="#ffffff"
+        android:hint="password"
+        android:textColorHint="#fff"
+        android:gravity="center"/>
 
     <Button
+        android:layout_marginTop="50dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login"
-        android:id="@+id/login" />
+        android:id="@+id/login"
+        android:background="#000"
+        android:layout_gravity="center"
+        android:textColor="#fff"
+        android:textSize="18dp"
+        android:textAllCaps="false"
+        android:fontFamily="sans-serif"
+        />
 </LinearLayout>

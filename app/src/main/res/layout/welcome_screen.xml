@@ -26,8 +26,8 @@
         android:layout_marginBottom="150dp"/>
 
     <Button
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
         android:text="@string/Sign_up"
         android:id="@+id/sign_up"
         android:layout_alignParentBottom="true"
@@ -36,15 +36,18 @@
         android:layout_centerHorizontal="true"
         android:layout_marginRight="130dp"
         android:layout_marginLeft="130dp"
-        android:layout_marginBottom="60dp"
-        android:background="#0000"
+        android:layout_marginBottom="100dp"
+        android:layout_marginTop="80dp"
+        android:background="#000"
         android:textColor="#ffff"
-        android:textStyle="bold"
+        android:textSize="18dp"
+        android:textAllCaps="false"
+        android:fontFamily="sans-serif"
         />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
         android:text="@string/login"
         android:id="@+id/login"
         android:layout_alignBottom="@+id/sign_up"
@@ -52,8 +55,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginRight="130dp"
         android:layout_marginLeft="130dp"
-        android:layout_marginBottom="50dp"
-        android:background="#0000"
+        android:layout_marginBottom="60dp"
+        android:background="#000"
         android:textColor="#ffff"
-        android:textStyle="bold"/>
+        android:textSize="18dp"
+        android:textAllCaps="false"
+        android:fontFamily="sans-serif"/>
 </RelativeLayout>

@@ -8,56 +8,55 @@
     android:paddingRight="16dp"
     android:paddingBottom="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/user_name"
-        android:id="@+id/textView2"
-        android:textColor="#ffffff"/>
-
     <EditText
-        android:layout_width="match_parent"
+        android:layout_marginTop="150dp"
+        android:layout_width="250dp"
+        android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:id="@+id/signupUserName"
-        android:textColor="#ffffff"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/password"
-        android:id="@+id/textView3"
-        android:textColor="#ffffff"/>
+        android:textColorHint="#fff"
+        android:hint="user name"
+        android:gravity="center"
+        android:textColor="#fff"
+        />
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/signupPassword"
-        android:textColor="#ffffff"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/confirm_password"
-        android:id="@+id/textView4"
-        android:textColor="#ffffff"/>
+        android:hint="password"
+        android:textColorHint="#fff"
+        android:gravity="center"
+        android:textColor="#fff"
+        />
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/signupConfirmPassword"
-        android:textColor="#ffffff"/>
+        android:hint="confirm password"
+        android:textColorHint="#fff"
+        android:gravity="center"
+        android:textColor="#fff"
+        />
 
     <Button
+        android:layout_marginTop="50dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/join"
-        android:id="@+id/join"/>
+        android:id="@+id/join"
+        android:background="#000"
+        android:textColor="#fff"
+        android:layout_gravity="center"
+        android:textSize="18dp"
+        android:textAllCaps="false"
+        android:fontFamily="sans-serif"/>
 
 </LinearLayout>
