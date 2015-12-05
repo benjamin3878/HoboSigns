@@ -3,6 +3,7 @@ package course.example.ben.hobosigns;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,9 +15,13 @@ import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
 
+    private String TAG = "Testing MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.i(TAG, "THIS IS IN ONCREATE");
         // The 3 lines below are to initialize Parse
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
@@ -57,5 +62,26 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onPause(){
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.i(TAG, "THIS IS IN ONRESUME");
+        if (ParseUser.getCurrentUser() != null) {
+            // Start an intent for the logged in activity
+            Intent i = new Intent(this, Home.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(i);
+        } else {
+            startActivity(new Intent(this, WelcomeScreen.class));
+        }
+
+    }
 
 }

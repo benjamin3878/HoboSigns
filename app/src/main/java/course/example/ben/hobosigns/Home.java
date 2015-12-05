@@ -66,10 +66,11 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
     private SupportMapFragment mapFragment;
     private LocationRequest locationRequest;
-    private String TAG = "Testing";
+    private String TAG = "Testing HOME";
     private ParseGeoPoint geoPoint;
     private double longitude;
     private double latitude;
+    private boolean paused = false;
 
     private final Map<String, Marker> mapMarkers = new HashMap<String, Marker>();
 
@@ -77,7 +78,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
-
+        Log.i(TAG, "THIS IS IN ONCREATE");
 
         Button newPostButton = (Button) findViewById(R.id.camera_button);
         newPostButton.setOnClickListener(new View.OnClickListener() {
@@ -230,5 +231,49 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
             latitude = location.getLatitude();
         }
     };
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.i(TAG, "THIS IS IN ONPAUSE");
+        paused = true;
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(paused) {
+            setContentView(R.layout.home);
+
+            Button newPostButton = (Button) findViewById(R.id.camera_button);
+            newPostButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Home.this, CreatePost.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivityForResult(intent, 1);
+                }
+            });
+
+            locationRequest = LocationRequest.create();
+
+            // Set up the map fragment
+            mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
+            mapFragment.getMapAsync(this);
+            Log.i(TAG, "THIS IS IN ONRESUME");
+            paused = false;
+        }
+    }
+
+    @Override
+    protected void onPostResume(){
+        super.onPostResume();
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
 }

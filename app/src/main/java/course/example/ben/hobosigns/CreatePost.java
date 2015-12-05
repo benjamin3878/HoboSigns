@@ -64,14 +64,6 @@ public class CreatePost extends AppCompatActivity {
         Log.i("createPost", "in OnCreate");
 
         imageView = (ImageView) findViewById(R.id.imageView);
-//        startActivity(new Intent(this, CameraFragment.class));
-
-//        Intent showContent = new Intent(getApplicationContext(),
-//                CameraFragment.class);
-//        startActivity(showContent);
-
-
-
 
         Button cameraButton = (Button) findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
