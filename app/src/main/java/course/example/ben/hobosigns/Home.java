@@ -64,7 +64,7 @@ public class Home  extends AppCompatActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
-        Button newPostButton = (Button) findViewById(R.id.button_new_post);
+        Button newPostButton = (Button) findViewById(R.id.camera_button);
         newPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
