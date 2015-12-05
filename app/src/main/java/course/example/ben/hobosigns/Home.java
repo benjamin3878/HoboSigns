@@ -114,12 +114,10 @@ public class Home  extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng collegePark = new LatLng(38.99, -76.92);
+        LatLng collegePark = new LatLng(38.99, -77.00);
         LatLng test = new LatLng(38.99, -76.82);
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.test);
         BitmapDescriptor icon1 = BitmapDescriptorFactory.fromResource(R.drawable.test1);
-        //TODO: DO THIS WITH BITMAPS FROM DATABASE - PUT IN QUERY METHOD
-        //BitmapDescriptorFactory.fromBitmap();
         map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker").icon(icon));
         map.addMarker(new MarkerOptions().position(test).title("Test 1").icon(icon1));
         map.moveCamera(CameraUpdateFactory.newLatLng(collegePark));
@@ -158,6 +156,7 @@ public class Home  extends AppCompatActivity implements OnMapReadyCallback {
                 // Posts to show on the map
                 Set<String> toKeep = new HashSet<String>();
                 // Loop through the results of the search
+                Log.i(TAG, objects.toString());
                 for (HoboSignsPost post : objects) {
                     // Add this post to the list of map pins to keep
                     toKeep.add(post.getObjectId());
