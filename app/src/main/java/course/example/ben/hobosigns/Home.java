@@ -100,6 +100,16 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == 1) {
+            if (requestCode == RESULT_OK) {
+                //TODO: GRAB BITMAP FROM PATH
+            }
+        }
+    }
+
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
