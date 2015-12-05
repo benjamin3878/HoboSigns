@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         if (ParseUser.getCurrentUser() != null) {
             // Start an intent for the logged in activity
             Intent i = new Intent(this, Home.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(i);
         }else{
