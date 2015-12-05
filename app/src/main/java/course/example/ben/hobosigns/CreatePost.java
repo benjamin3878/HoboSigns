@@ -70,6 +70,9 @@ public class CreatePost extends AppCompatActivity {
 //                CameraFragment.class);
 //        startActivity(showContent);
 
+
+
+
         Button cameraButton = (Button) findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override

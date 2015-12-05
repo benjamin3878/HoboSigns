@@ -1,10 +1,16 @@
 package course.example.ben.hobosigns;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -53,10 +60,16 @@ import java.util.Set;
  * Home is the main interaction with a user.
  * The user will view post of other user in the area via map or list mode
  */
-public class Home  extends AppCompatActivity implements OnMapReadyCallback {
+public class Home extends AppCompatActivity implements OnMapReadyCallback {
+    private final double COLLEGE_PARK_LATITUDE = 38.9967;
+    private final double COLLEGE_PARK_LONGITUDE = -76.9275;
+
     private SupportMapFragment mapFragment;
     private LocationRequest locationRequest;
     private String TAG = "Testing";
+    private ParseGeoPoint geoPoint;
+    private double longitude;
+    private double latitude;
 
     private final Map<String, Marker> mapMarkers = new HashMap<String, Marker>();
 
@@ -64,6 +77,7 @@ public class Home  extends AppCompatActivity implements OnMapReadyCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
+
 
         Button newPostButton = (Button) findViewById(R.id.camera_button);
         newPostButton.setOnClickListener(new View.OnClickListener() {
@@ -121,10 +135,24 @@ public class Home  extends AppCompatActivity implements OnMapReadyCallback {
         return new LatLng(38.99 + xDis, -76.95 + yDis);
     }
 
-
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng collegePark = new LatLng(38.99, -76.95);
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        Location location;
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+        } else {
+            longitude = COLLEGE_PARK_LONGITUDE;
+            latitude = COLLEGE_PARK_LATITUDE;
+        }
+
+
+        LatLng collegePark = new LatLng(latitude, longitude);
         LatLng test = new LatLng(38.99, -76.82);
         //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.test);
         //BitmapDescriptor icon1 = BitmapDescriptorFactory.fromResource(R.drawable.test1);
@@ -180,14 +208,17 @@ public class Home  extends AppCompatActivity implements OnMapReadyCallback {
                     //BitmapDescriptorFactory.fromBitmap();
                     // Add a new marker
                     Marker marker = mapFragment.getMap().addMarker(markerOpts);
+                }
             }
-        }
-    });
+        });
 
     }
 
-
-
-
+    private final LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+        }
+    };
 
 }
