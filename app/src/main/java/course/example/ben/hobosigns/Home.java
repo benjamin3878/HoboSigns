@@ -23,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -226,11 +227,10 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
 
 
         LatLng collegePark = new LatLng(latitude, longitude);
-        LatLng test = new LatLng(38.99, -76.82);
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.testing1);
         //BitmapDescriptor icon1 = BitmapDescriptorFactory.fromResource(R.drawable.test1);
-        Marker collegeParkMarker = map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
-        markerToBitmap.put(collegeParkMarker, bm);
+        //Marker collegeParkMarker = map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
+        //markerToBitmap.put(collegeParkMarker, bm);
         map.moveCamera(CameraUpdateFactory.newLatLng(collegePark));
         map.animateCamera(CameraUpdateFactory.zoomTo(10.0f));
         doMapQuery();
@@ -269,15 +269,27 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
                 // Loop through the results of the search
                 Log.i(TAG, objects.toString());
                 for (HoboSignsPost post : objects) {
+                    Log.i(TAG, post.getLocation().toString());
                     // Add this post to the list of map pins to keep
                     toKeep.add(post.getObjectId());
                     // Check for an existing marker for this post
                     Marker oldMarker = mapMarkers.get(post.getObjectId());
                     // Set up the map marker's location
                     MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude()));
-                    //BitmapDescriptorFactory.fromBitmap();
+
+                    ParseFile postImage = post.getImageFile();
+
+                    ParseFile file = post.getImageFile();
+                    byte[] bitMapData = new byte[100];
+                    try {
+                        bitMapData = file.getData();
+                    } catch (ParseException p) {
+                        Log.i(TAG, "Error grabbing bitmap");
+                    }
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
                     // Add a new marker
                     Marker marker = mapFragment.getMap().addMarker(markerOpts);
+                    markerToBitmap.put(marker, bitmap);
                 }
             }
         });
@@ -306,6 +318,7 @@ private final LocationListener locationListener = new LocationListener() {
     @Override
     protected void onResume() {
         super.onResume();
+        doMapQuery();
         /*
         if(paused) {
             //setContentView(R.layout.home);
