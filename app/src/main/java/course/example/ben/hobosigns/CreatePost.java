@@ -27,6 +27,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+/*
+import android.app.Dialog;
+import android.graphics.ColorMatrix;
+import android.graphics.Shader;
+import android.graphics.RectF;
+import android.graphics.SweepGradient;
+*/
 
 import android.app.Dialog;
 import android.graphics.ColorMatrix;
@@ -105,7 +112,6 @@ public class CreatePost extends AppCompatActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(imageName));
         startActivityForResult(intent, CAMERA_REQUEST);
-
 
 //        dialog.show();
 
@@ -335,7 +341,6 @@ public class CreatePost extends AppCompatActivity {
         }
     }
 
-
     public class OnColorChangedListener {
 
         void colorChanged(int color){
@@ -550,6 +555,4 @@ public class CreatePost extends AppCompatActivity {
             setTitle("Pick a Color");
         }
     }
-
-
 }
