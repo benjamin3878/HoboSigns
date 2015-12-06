@@ -9,8 +9,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -54,6 +56,10 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -139,7 +145,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
             public void done(ParseException e) {
                 if (e != null) {
                     Log.i(TAG, "Image failed to be saved!");
-                    Toast.makeText(getApplicationContext(), "Sign image failed to be saved", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "Sign image failed to be saved", Toast.LENGTH_LONG).show();
                 } else {
                     HoboSignsPost newPost = new HoboSignsPost();
                     newPost.setImageFile(photoFile);
@@ -150,10 +156,10 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
                         public void done(ParseException e) {
                             if (e != null) {
                                 Log.i(TAG, "ParseObject failed to submit!");
-                                Toast.makeText(getApplicationContext(), "Sign failed to submit", Toast.LENGTH_LONG);
+                                Toast.makeText(getApplicationContext(), "Sign failed to submit", Toast.LENGTH_LONG).show();
                             } else {
                                 Log.i(TAG, "ParseObject submitted!!");
-                                Toast.makeText(getApplicationContext(), "Sign submitted!", Toast.LENGTH_LONG);
+                                Toast.makeText(getApplicationContext(), "Sign submitted!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -331,9 +337,65 @@ private final LocationListener locationListener = new LocationListener() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         Log.i(TAG, markerToBitmap.get(marker).toString());
-        intent.putExtra("bitmap", markerToBitmap.get(marker));
+
+        // Store image in memory before starting new activity to view
+        intent.putExtra("bitmap", saveDrawing(markerToBitmap.get(marker)));
         startActivity(intent);
         return true;
+    }
+
+    // Code from https://guides.codepath.com/android/Accessing-the-Camera-and-Stored-Media
+    // Returns the Uri for a photo stored on disk given the fileName
+    public Uri getPhotoFileUri(String fileName) {
+        return Uri.fromFile(getPhotoFile(fileName));
+    }
+
+    public File getPhotoFile(String fileName) {
+        // Only continue if the SD Card is mounted
+        if (isExternalStorageAvailable()) {
+            // Get safe storage directory for photos
+            File mediaStorageDir = new File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), TAG);
+
+            // Create the storage directory if it does not exist
+            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+                Log.d(TAG, "failed to create directory");
+            }
+
+            // Return the file target for the photo based on filename
+            return new File(mediaStorageDir.getPath() + File.separator + fileName);
+        }
+        return null;
+    }
+
+    private boolean isExternalStorageAvailable() {
+        String state = Environment.getExternalStorageState();
+        if (state.equals(Environment.MEDIA_MOUNTED)) {
+            return true;
+        }
+        return false;
+    }
+
+    private String saveDrawing(Bitmap image) {
+        Log.i(TAG, "Posting drawing!");
+        FileOutputStream imageOutputStream;
+
+        try {
+            imageOutputStream = new FileOutputStream(getPhotoFile("tempSignImage"));
+            image.compress(Bitmap.CompressFormat.PNG, 100, imageOutputStream);
+            return getPhotoFileUri("tempSignImage").getPath();
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG);
+            Log.d(TAG, "NullPointerException");
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG);
+            Log.d(TAG, "FileNotFoundException");
+        } catch (IOException e) {
+            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG);
+            Log.d(TAG, "IOException");
+        }
+
+        return null;
     }
 
     @Override

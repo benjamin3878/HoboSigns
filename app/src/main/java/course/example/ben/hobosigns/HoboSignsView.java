@@ -19,9 +19,13 @@ public class HoboSignsView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hobo_signs_view);
         Intent intent = getIntent();
-        Bitmap bitmap = (Bitmap)intent.getExtras().get("bitmap");
-        Log.i("TEST MAP", bitmap.toString());
-                BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+
+        String filePath = intent.getStringExtra("bitmap");
+        Bitmap photo = BitmapFactory.decodeFile(filePath);
+
+
+        Log.i("TEST MAP", photo.toString());
+                BitmapDrawable ob = new BitmapDrawable(getResources(), photo);
         ImageView imageView =  (ImageView)findViewById(R.id.sign);
         imageView.setBackground(ob);
     }

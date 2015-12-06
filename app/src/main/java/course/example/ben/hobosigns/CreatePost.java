@@ -117,7 +117,7 @@ public class CreatePost extends AppCompatActivity {
             // Load the taken image into a preview
             dv.setmBitmap(photo);
         } else {
-            Toast.makeText(getApplicationContext(), "Image was not captured", Toast.LENGTH_SHORT);
+            Toast.makeText(getApplicationContext(), "Image was not captured", Toast.LENGTH_SHORT).show();
         }
     }
 
