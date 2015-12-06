@@ -61,6 +61,9 @@ import java.util.Set;
  * The user will view post of other user in the area via map or list mode
  */
 public class Home extends AppCompatActivity implements OnMapReadyCallback {
+    // The Map Object
+    private GoogleMap mMap;
+
     private final double COLLEGE_PARK_LATITUDE = 38.9967;
     private final double COLLEGE_PARK_LONGITUDE = -76.9275;
 
@@ -87,7 +90,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
                 Intent intent = new Intent(Home.this, CreatePost.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, 11);
             }
         });
 
@@ -95,6 +98,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
         // Set up the map fragment
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
+        mMap = mapFragment.getMap();
         mapFragment.getMapAsync(this);
         Log.i(TAG, mapFragment.toString());
 
@@ -102,9 +106,13 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == 1) {
+        Log.i(TAG, "FUCK ME");
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 11) {
             if (requestCode == RESULT_OK) {
-                //TODO: GRAB BITMAP FROM PATH
+                Log.i(TAG, "FILEPATH: " + data.getStringExtra("filepath"));
+                BitmapDescriptor icon1 = BitmapDescriptorFactory.fromPath(data.getStringExtra("filepath"));
+                mMap.addMarker(new MarkerOptions().position(generate()).title("generate").icon(icon1));
             }
         }
     }
@@ -240,10 +248,16 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onResume(){
         super.onResume();
+        /*
         if(paused) {
-            setContentView(R.layout.home);
+            //setContentView(R.layout.home);
 
             Button newPostButton = (Button) findViewById(R.id.camera_button);
             newPostButton.setOnClickListener(new View.OnClickListener() {
@@ -252,7 +266,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
                     Intent intent = new Intent(Home.this, CreatePost.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivityForResult(intent, 1);
+                    startActivityForResult(intent, 11);
                 }
             });
 
@@ -264,6 +278,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
             Log.i(TAG, "THIS IS IN ONRESUME");
             paused = false;
         }
+        */
     }
 
     @Override
