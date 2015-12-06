@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -19,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationServices;
@@ -43,11 +46,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -74,6 +80,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     private double longitude;
     private double latitude;
     private boolean paused = false;
+    private ParseFile photoFile;
 
     private final Map<String, Marker> mapMarkers = new HashMap<String, Marker>();
 
@@ -88,7 +95,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Home.this, CreatePost.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivityForResult(intent, 11);
             }
@@ -108,13 +115,49 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i(TAG, "FUCK ME");
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == 11) {
-            if (requestCode == RESULT_OK) {
-                Log.i(TAG, "FILEPATH: " + data.getStringExtra("filepath"));
-                BitmapDescriptor icon1 = BitmapDescriptorFactory.fromPath(data.getStringExtra("filepath"));
-                mMap.addMarker(new MarkerOptions().position(generate()).title("generate").icon(icon1));
+        if (requestCode == 11) {
+            if (resultCode == RESULT_OK) {
+                Log.i(TAG, "FILEPATH: " + data.getStringExtra("filePath"));
+//                BitmapDescriptor icon1 = BitmapDescriptorFactory.fromPath(data.getStringExtra("filePath"));
+//                mMap.addMarker(new MarkerOptions().position(generate()).title("generate").icon(icon1));
+                submitSignToParse(data.getStringExtra("filePath"));
             }
         }
+    }
+
+    private void submitSignToParse(String filePath) {
+        Bitmap photo = BitmapFactory.decodeFile(filePath);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        photoFile = new ParseFile("hobosign.png", byteArray);
+        photoFile.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    Log.i(TAG, "Image failed to be saved!");
+                    Toast.makeText(getApplicationContext(), "Sign image failed to be saved", Toast.LENGTH_LONG);
+                } else {
+                    HoboSignsPost newPost = new HoboSignsPost();
+                    newPost.setImageFile(photoFile);
+                    newPost.setUser(ParseUser.getCurrentUser());
+                    newPost.setLocation(geoPoint);
+                    newPost.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                Log.i(TAG, "ParseObject failed to submit!");
+                                Toast.makeText(getApplicationContext(), "Sign failed to submit", Toast.LENGTH_LONG);
+                            } else {
+                                Log.i(TAG, "ParseObject submitted!!");
+                                Toast.makeText(getApplicationContext(), "Sign submitted!", Toast.LENGTH_LONG);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
 
@@ -138,7 +181,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
-    private void logOut(){
+    private void logOut() {
         ParseUser.logOut();
         Intent intent = new Intent(Home.this, WelcomeScreen.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -147,8 +190,8 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
     private LatLng generate() {
         Random rn = new Random();
-        float xDis = rn.nextFloat()/100;
-        float yDis = rn.nextFloat()/100;
+        float xDis = rn.nextFloat() / 100;
+        float yDis = rn.nextFloat() / 100;
         Log.i(TAG, "GEN X: " + xDis);
         Log.i(TAG, "GEN Y: " + yDis);
         return new LatLng(38.99 + xDis, -76.95 + yDis);
@@ -170,6 +213,8 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
             latitude = COLLEGE_PARK_LATITUDE;
         }
 
+        geoPoint = new ParseGeoPoint(latitude, longitude);
+
 
         LatLng collegePark = new LatLng(latitude, longitude);
         LatLng test = new LatLng(38.99, -76.82);
@@ -177,7 +222,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
         //BitmapDescriptor icon1 = BitmapDescriptorFactory.fromResource(R.drawable.test1);
         map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
         map.addMarker(new MarkerOptions().position(test).title("Test 1"));//.icon(icon1));
-        for(int i = 0; i < 10; i ++) {
+        for (int i = 0; i < 10; i++) {
             map.addMarker(new MarkerOptions().position(generate()).title("generate"));
         }
         map.moveCamera(CameraUpdateFactory.newLatLng(collegePark));
@@ -233,15 +278,15 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
     }
 
-    private final LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-        }
-    };
+private final LocationListener locationListener = new LocationListener() {
+    public void onLocationChanged(Location location) {
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+    }
+};
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         Log.i(TAG, "THIS IS IN ONPAUSE");
         paused = true;
@@ -253,7 +298,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         /*
         if(paused) {
@@ -282,7 +327,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     @Override
-    protected void onPostResume(){
+    protected void onPostResume() {
         super.onPostResume();
     }
 

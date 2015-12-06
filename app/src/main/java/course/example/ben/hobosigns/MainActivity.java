@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         // The 3 lines below are to initialize Parse
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
+        ParseObject.registerSubclass(HoboSignsPost.class);
         Parse.initialize(this, "icLRaWe8n7wy46STg3LubL3EliVC56yGYJF4lqgZ",
                 "29QxzODPy3epUmInINvCBSvwwbvj4PdQx2bcefKS");
 
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
             // Start an intent for the logged in activity
             Intent i = new Intent(this, Home.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(i);
         }else{
             startActivity(new Intent(this, WelcomeScreen.class));
@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
             // Start an intent for the logged in activity
             Intent i = new Intent(this, Home.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(i);
         } else {
             startActivity(new Intent(this, WelcomeScreen.class));

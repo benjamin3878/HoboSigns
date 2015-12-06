@@ -108,7 +108,7 @@ public class CreatePost extends AppCompatActivity {
             // Rotate Bitmap if it was taken landscape
             if (photo.getHeight() < photo.getWidth()) {
                 Matrix matrix = new Matrix();
-                matrix.postRotate(90);
+                matrix.postRotate(-90);
 
                 Bitmap tempPhoto = photo;
                 photo = Bitmap.createBitmap(tempPhoto, 0, 0, tempPhoto.getWidth(), tempPhoto.getHeight(), matrix, true);
@@ -154,6 +154,7 @@ public class CreatePost extends AppCompatActivity {
     }
 
     private String postDrawing() {
+        Log.i(APP_TAG, "Posting drawing!");
         FileOutputStream imageOutputStream;
 
         try {
