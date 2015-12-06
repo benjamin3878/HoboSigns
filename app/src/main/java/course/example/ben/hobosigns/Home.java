@@ -80,7 +80,18 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
 
     private final double COLLEGE_PARK_LATITUDE = 38.9967;
     private final double COLLEGE_PARK_LONGITUDE = -76.9275;
+    private static final long ONE_MIN = 1000 * 60;
+    private static final long TWO_MIN = ONE_MIN * 2;
+    private static final long FIVE_MIN = ONE_MIN * 5;
+    private static final long MEASURE_TIME = 1000 * 30;
+    private static final long POLLING_FREQ = 1000 * 10;
+    private static final float MIN_ACCURACY = 25.0f;
+    private static final float MIN_LAST_READ_ACCURACY = 500.0f;
+    private static final float MIN_DISTANCE = 10.0f;
 
+    private Location mBestReading;
+    private LocationManager mLocationManager;
+    private LocationListener mLocationListener;
     private SupportMapFragment mapFragment;
     private LocationRequest locationRequest;
     private String TAG = "Testing HOME";
@@ -208,17 +219,31 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         map.setOnMarkerClickListener(this);
+//        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mBestReading = bestLastKnownLocation(MIN_LAST_READ_ACCURACY, FIVE_MIN);
+        if (null != mBestReading) {
+//            updateDisplay(mBestReading);
+        } else {
+//            mAccuracyView.setText("No Initial Reading Available");
+            //todo
+            Log.i(TAG, "BEFORE THE TOAST MESSAGE");
+            Toast.makeText(getApplicationContext(), "No GPS Position", Toast.LENGTH_LONG).show();
+        }
 
         Location location;
         if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                mLocationManager != null &&
+                (location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)) != null) {
+//            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             longitude = location.getLongitude();
             latitude = location.getLatitude();
         } else {
+            Toast.makeText(this, "Use College Park as location", Toast.LENGTH_LONG).show();
             longitude = COLLEGE_PARK_LONGITUDE;
             latitude = COLLEGE_PARK_LATITUDE;
         }
@@ -398,13 +423,13 @@ private final LocationListener locationListener = new LocationListener() {
             image.compress(Bitmap.CompressFormat.PNG, 100, imageOutputStream);
             return getPhotoFileUri("tempSignImage").getPath();
         } catch (NullPointerException e) {
-            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG).show();
             Log.d(TAG, "NullPointerException");
         } catch (FileNotFoundException e) {
-            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG).show();
             Log.d(TAG, "FileNotFoundException");
         } catch (IOException e) {
-            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG).show();
             Log.d(TAG, "IOException");
         }
 
@@ -420,5 +445,46 @@ private final LocationListener locationListener = new LocationListener() {
     public void onBackPressed() {
         moveTaskToBack(true);
     }
+
+
+    private Location bestLastKnownLocation(float minAccuracy, long maxAge) {
+
+        Location bestResult = null;
+        float bestAccuracy = Float.MAX_VALUE;
+        long bestAge = Long.MIN_VALUE;
+
+        List<String> matchingProviders = mLocationManager.getAllProviders();
+
+        for (String provider : matchingProviders) {
+
+            Location location;
+            if(ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED){
+                location = mLocationManager.getLastKnownLocation(provider);
+            }else{
+                //error user has bloacked gps location
+                Toast.makeText(getApplicationContext(), "Please give this application GPS Permission", Toast.LENGTH_LONG).show();
+                return null;
+            }
+            if (location != null) {
+                float accuracy = location.getAccuracy();
+                long time = location.getTime();
+
+                if (accuracy < bestAccuracy) {
+                    bestResult = location;
+                    bestAccuracy = accuracy;
+                    bestAge = time;
+                }
+            }
+        }
+
+        // Return best reading or null
+        if (bestAccuracy > minAccuracy
+                || (System.currentTimeMillis() - bestAge) > maxAge) {
+            return null;
+        } else {
+            return bestResult;
+        }
+    }
+
 
 }
