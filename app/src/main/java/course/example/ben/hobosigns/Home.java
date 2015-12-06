@@ -66,9 +66,10 @@ import java.util.Set;
  * Home is the main interaction with a user.
  * The user will view post of other user in the area via map or list mode
  */
-public class Home extends AppCompatActivity implements OnMapReadyCallback {
+public class Home extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     // The Map Object
     private GoogleMap mMap;
+    private HashMap<Marker, Bitmap> markerToBitmap = new HashMap<Marker, Bitmap>();
 
     private final double COLLEGE_PARK_LATITUDE = 38.9967;
     private final double COLLEGE_PARK_LONGITUDE = -76.9275;
@@ -113,13 +114,14 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "FUCK ME");
+        Log.i(TAG, "TESTING - REQUESTCODE: " + requestCode + "RESULTCODE: " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 11) {
             if (resultCode == RESULT_OK) {
                 Log.i(TAG, "FILEPATH: " + data.getStringExtra("filePath"));
-//                BitmapDescriptor icon1 = BitmapDescriptorFactory.fromPath(data.getStringExtra("filePath"));
-//                mMap.addMarker(new MarkerOptions().position(generate()).title("generate").icon(icon1));
+                Bitmap bm = BitmapFactory.decodeFile(data.getStringExtra("filePath"));
+                Marker markerToAdd = mMap.addMarker(new MarkerOptions().position(generate()).title("generate"));
+                markerToBitmap.put(markerToAdd, bm);
                 submitSignToParse(data.getStringExtra("filePath"));
             }
         }
@@ -200,6 +202,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap map) {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        map.setOnMarkerClickListener(this);
 
         Location location;
         if (Build.VERSION.SDK_INT >= 23 &&
@@ -218,13 +221,10 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
         LatLng collegePark = new LatLng(latitude, longitude);
         LatLng test = new LatLng(38.99, -76.82);
-        //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.test);
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.testing1);
         //BitmapDescriptor icon1 = BitmapDescriptorFactory.fromResource(R.drawable.test1);
-        map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
-        map.addMarker(new MarkerOptions().position(test).title("Test 1"));//.icon(icon1));
-        for (int i = 0; i < 10; i++) {
-            map.addMarker(new MarkerOptions().position(generate()).title("generate"));
-        }
+        Marker collegeParkMarker = map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
+        markerToBitmap.put(collegeParkMarker, bm);
         map.moveCamera(CameraUpdateFactory.newLatLng(collegePark));
         map.animateCamera(CameraUpdateFactory.zoomTo(10.0f));
         doMapQuery();
@@ -326,8 +326,18 @@ private final LocationListener locationListener = new LocationListener() {
         */
     }
 
+    public boolean onMarkerClick(final Marker marker) {
+        Intent intent = new Intent(Home.this, HoboSignsView.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Log.i(TAG, markerToBitmap.get(marker).toString());
+        intent.putExtra("bitmap", markerToBitmap.get(marker));
+        startActivity(intent);
+        return true;
+    }
+
     @Override
-    protected void onPostResume() {
+    protected void onPostResume(){
         super.onPostResume();
     }
 
