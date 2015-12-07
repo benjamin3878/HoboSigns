@@ -12,6 +12,10 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseQuery;
+
 public class HoboSignsView extends AppCompatActivity {
 
     @Override
@@ -20,8 +24,21 @@ public class HoboSignsView extends AppCompatActivity {
         setContentView(R.layout.activity_hobo_signs_view);
         Intent intent = getIntent();
 
-        String filePath = intent.getStringExtra("bitmap");
-        Bitmap photo = BitmapFactory.decodeFile(filePath);
+        ParseQuery<HoboSignsPost> mapQuery = HoboSignsPost.getQuery();
+        HoboSignsPost clickedPost = new HoboSignsPost();
+        try {
+            clickedPost = mapQuery.get(intent.getStringExtra("bitmap"));
+        } catch(ParseException e) {
+            return;
+        }
+        ParseFile file = clickedPost.getImageFile();
+        byte[] bitMapData = new byte[100];
+        try {
+            bitMapData = file.getData();
+        } catch (ParseException p) {
+            return;
+        }
+        Bitmap photo = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
 
 
         Log.i("TEST MAP", photo.toString());

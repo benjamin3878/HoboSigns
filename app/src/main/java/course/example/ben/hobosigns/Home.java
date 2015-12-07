@@ -58,7 +58,7 @@ import java.util.Set;
 public class Home extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     // The Map Object
     private GoogleMap mMap;
-    private HashMap<Marker, Bitmap> markerToBitmap = new HashMap<Marker, Bitmap>();
+    private HashMap<Marker, HoboSignsPost> markerToBitmap = new HashMap<Marker, HoboSignsPost>();
 
     private final double COLLEGE_PARK_LATITUDE = 38.9967;
     private final double COLLEGE_PARK_LONGITUDE = -76.9275;
@@ -120,10 +120,10 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
         if (requestCode == 11) {
             if (resultCode == RESULT_OK) {
                 Log.i(TAG, "FILEPATH: " + data.getStringExtra("filePath"));
-                Bitmap bm = BitmapFactory.decodeFile(data.getStringExtra("filePath"));
+                //Bitmap bm = BitmapFactory.decodeFile(data.getStringExtra("filePath"));
                 Marker markerToAdd = mMap.addMarker(new MarkerOptions().position(generate()).title("generate"));
-                markerToBitmap.put(markerToAdd, bm);
                 submitSignToParse(data.getStringExtra("filePath"));
+                doMapQuery();
             }
         }
     }
@@ -292,8 +292,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
                     // Set up the map marker's location
                     MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude()));
 
-                    ParseFile postImage = post.getImageFile();
-
+                    /*
                     ParseFile file = post.getImageFile();
                     byte[] bitMapData = new byte[100];
                     try {
@@ -302,9 +301,10 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
                         Log.i(TAG, "Error grabbing bitmap");
                     }
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
+                    */
                     // Add a new marker
                     Marker marker = mapFragment.getMap().addMarker(markerOpts);
-                    markerToBitmap.put(marker, bitmap);
+                    markerToBitmap.put(marker, post);
                 }
             }
         });
@@ -367,7 +367,7 @@ private final LocationListener locationListener = new LocationListener() {
         Log.i(TAG, markerToBitmap.get(marker).toString());
 
         // Store image in memory before starting new activity to view
-        intent.putExtra("bitmap", saveDrawing(markerToBitmap.get(marker)));
+        intent.putExtra("bitmap", markerToBitmap.get(marker).getObjectId());
         startActivity(intent);
         return true;
     }
