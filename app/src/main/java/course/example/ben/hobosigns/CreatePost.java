@@ -98,7 +98,7 @@ public class CreatePost extends AppCompatActivity {
         dialog = new ColorPickerDialog(CreatePost.this, new OnColorChangedListener(), 0);
         //dialog.show();
 
-        Button colorPickButton = (Button) findViewById(R.id.camera_button);
+        Button colorPickButton = (Button) findViewById(R.id.color_button);
         colorPickButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -216,6 +216,7 @@ public class CreatePost extends AppCompatActivity {
     public class OnColorChangedListener {
 
         void colorChanged(int color){
+            Log.i("CreatePost", "Color changed to: " + color);
             dv.mPaint.setColor(color);
         };
     }

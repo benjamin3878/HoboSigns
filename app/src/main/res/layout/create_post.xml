@@ -26,7 +26,7 @@
         android:layout_width="85dp"
         android:layout_height="74dp"
         android:background = "@drawable/colorpicker"
-        android:id="@+id/camera_button"
+        android:id="@+id/color_button"
         android:layout_gravity="right" />
 
 </RelativeLayout >
