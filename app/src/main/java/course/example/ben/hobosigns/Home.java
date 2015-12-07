@@ -233,20 +233,29 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
             Toast.makeText(getApplicationContext(), "No GPS Position", Toast.LENGTH_LONG).show();
         }
 
+        longitude = COLLEGE_PARK_LONGITUDE;
+        latitude = COLLEGE_PARK_LATITUDE;
+
         Location location;
         if (Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                mLocationManager != null &&
-                (location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)) != null) {
-//            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-        } else {
-            Toast.makeText(this, "Use College Park as location", Toast.LENGTH_LONG).show();
-            longitude = COLLEGE_PARK_LONGITUDE;
-            latitude = COLLEGE_PARK_LATITUDE;
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            if(mLocationManager != null){
+                if((location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)) != null){
+                    longitude = location.getLongitude();
+                    latitude = location.getLatitude();
+                }else{
+                    Toast.makeText(this, "Use College Park as location", Toast.LENGTH_LONG).show();
+                }
+            }else{
+                Toast.makeText(this, "mLocationManager == null", Toast.LENGTH_LONG).show();
+            }
+
+        }else{
+            Toast.makeText(this, "No Permissions", Toast.LENGTH_LONG).show();
         }
+
+
 
         geoPoint = new ParseGeoPoint(latitude, longitude);
 
