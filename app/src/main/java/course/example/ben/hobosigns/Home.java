@@ -88,6 +88,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
     private static final float MIN_ACCURACY = 25.0f;
     private static final float MIN_LAST_READ_ACCURACY = 500.0f;
     private static final float MIN_DISTANCE = 10.0f;
+    private static final float LOCATION_REFRESH_DISTANCE = 10.0f;
 
     private Location mBestReading;
     private LocationManager mLocationManager;
@@ -224,36 +225,34 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
 //        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mBestReading = bestLastKnownLocation(MIN_LAST_READ_ACCURACY, FIVE_MIN);
-        if (null != mBestReading) {
-//            updateDisplay(mBestReading);
+        Location location;
+        if (null != mBestReading ) {
+            longitude = mBestReading.getLongitude();
+            latitude = mBestReading.getLatitude();
         } else {
-//            mAccuracyView.setText("No Initial Reading Available");
-            //todo
+            longitude = COLLEGE_PARK_LONGITUDE;
+            latitude = COLLEGE_PARK_LATITUDE;
             Log.i(TAG, "BEFORE THE TOAST MESSAGE");
             Toast.makeText(getApplicationContext(), "No GPS Position", Toast.LENGTH_LONG).show();
         }
 
-        longitude = COLLEGE_PARK_LONGITUDE;
-        latitude = COLLEGE_PARK_LATITUDE;
-
-        Location location;
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            if(mLocationManager != null){
-                if((location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)) != null){
-                    longitude = location.getLongitude();
-                    latitude = location.getLatitude();
-                }else{
-                    Toast.makeText(this, "Use College Park as location", Toast.LENGTH_LONG).show();
-                }
-            }else{
-                Toast.makeText(this, "mLocationManager == null", Toast.LENGTH_LONG).show();
-            }
-
-        }else{
-            Toast.makeText(this, "No Permissions", Toast.LENGTH_LONG).show();
-        }
+//        if (Build.VERSION.SDK_INT >= 23 &&
+//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+//            if(mLocationManager != null){
+//                if((location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)) != null){
+//                    longitude = location.getLongitude();
+//                    latitude = location.getLatitude();
+//                }else{
+//                    Toast.makeText(this, "Use College Park as location", Toast.LENGTH_LONG).show();
+//                }
+//            }else{
+//                Toast.makeText(this, "mLocationManager == null", Toast.LENGTH_LONG).show();
+//            }
+//
+//        }else{
+//            Toast.makeText(this, "No Permissions", Toast.LENGTH_LONG).show();
+//        }
 
 
 
