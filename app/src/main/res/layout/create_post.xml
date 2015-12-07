@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#000"
+    android:background="#fff"
     android:weightSum="1">
 
     <course.example.ben.hobosigns.DrawingView
@@ -25,7 +25,7 @@
     <Button
         android:layout_width="85dp"
         android:layout_height="74dp"
-        android:background = "@drawable/black_slr_camera_256"
+        android:background = "@drawable/colorpicker"
         android:id="@+id/camera_button"
         android:layout_gravity="right" />
 
