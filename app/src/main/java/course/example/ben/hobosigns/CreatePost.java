@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,13 +27,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-/*
+
 import android.app.Dialog;
 import android.graphics.ColorMatrix;
 import android.graphics.Shader;
 import android.graphics.RectF;
 import android.graphics.SweepGradient;
-*/
+
 
 import com.parse.ParseUser;
 
@@ -54,6 +55,7 @@ public class CreatePost extends AppCompatActivity {
 
     DrawingView dv;
     private Paint mPaint;
+    ColorPickerDialog dialog;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,19 +84,34 @@ public class CreatePost extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.create_post);
+
+        dialog = new ColorPickerDialog(CreatePost.this, new OnColorChangedListener(), 0);
+        //dialog.show();
+
+        Button colorPickButton = (Button) findViewById(R.id.camera_button);
+        colorPickButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                dialog.show();
+            }
+        });
 
         Log.i("createPost", "in OnCreate");
 
-        Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(imageName));
         startActivityForResult(intent, CAMERA_REQUEST);
 
-        //ColorPickerDialog dialog = new ColorPickerDialog(getApplicationContext(), new OnColorChangedListener(), 0);
-        //dialog.show();
 
-        dv = new DrawingView(this);
-        setContentView(dv);
+//        dialog.show();
+
+//        dv = new DrawingView(this);
+        dv = (DrawingView) findViewById(R.id.drawingView);
+//        setContentView(dv);
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
@@ -103,6 +120,9 @@ public class CreatePost extends AppCompatActivity {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(12);
+
+
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -198,35 +218,34 @@ public class CreatePost extends AppCompatActivity {
 
         public DrawingView(Context c) {
             super(c);
-            context=c;
-            mPath = new Path();
-            mBitmapPaint = new Paint(Paint.DITHER_FLAG);
-            circlePaint = new Paint();
-            circlePath = new Path();
-            circlePaint.setAntiAlias(true);
-            circlePaint.setColor(Color.BLUE);
-            circlePaint.setStyle(Paint.Style.STROKE);
-            circlePaint.setStrokeJoin(Paint.Join.MITER);
-            circlePaint.setStrokeWidth(4f);
+            init(c);
         }
 
-        public DrawingView(Context c, Bitmap b) {
-            super(c);
-            context=c;
-            mPath = new Path();
-            mBitmapPaint = new Paint(Paint.DITHER_FLAG);
-            circlePaint = new Paint();
-            circlePath = new Path();
-            circlePaint.setAntiAlias(true);
-            circlePaint.setColor(Color.BLUE);
-            circlePaint.setStyle(Paint.Style.STROKE);
-            circlePaint.setStrokeJoin(Paint.Join.MITER);
-            circlePaint.setStrokeWidth(4f);
-            mBitmap = b;
+        public DrawingView(Context c, AttributeSet attrs) {
+            super(c, attrs);
+            init(c);
+        }
+
+        public DrawingView(Context c, AttributeSet attrs, int defStyle) {
+            super(c, attrs, defStyle);
+            init(c);
         }
 
         void setmBitmap(Bitmap b) {
             mBitmap = b;
+        }
+
+        private void init(Context c) {
+            context=c;
+            mPath = new Path();
+            mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+            circlePaint = new Paint();
+            circlePath = new Path();
+            circlePaint.setAntiAlias(true);
+            circlePaint.setColor(Color.BLUE);
+            circlePaint.setStyle(Paint.Style.STROKE);
+            circlePaint.setStrokeJoin(Paint.Join.MITER);
+            circlePaint.setStrokeWidth(4f);
         }
 
         @Override
@@ -245,7 +264,7 @@ public class CreatePost extends AppCompatActivity {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
-            canvas.drawBitmap( mBitmap, 0, 0, null);
+            canvas.drawBitmap(mBitmap, 0, 0, null);
             canvas.drawPath( mPath,  mPaint);
             canvas.drawPath( circlePath,  circlePaint);
         }
@@ -314,7 +333,7 @@ public class CreatePost extends AppCompatActivity {
         }
     }
 
-    /*
+
     public class OnColorChangedListener {
 
         void colorChanged(int color){
@@ -529,6 +548,6 @@ public class CreatePost extends AppCompatActivity {
             setTitle("Pick a Color");
         }
     }
-    */
+
 
 }

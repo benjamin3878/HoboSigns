@@ -8,6 +8,11 @@
     android:background="#000"
     android:weightSum="1">
 
+    <View class="course.example.ben.hobosigns.CreatePost.DrawingView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/drawingView"/>
+
 
     <!--<TextView-->
         <!--android:layout_width="170dp"-->
@@ -17,5 +22,11 @@
         <!--android:id="@+id/textView7"-->
         <!--android:layout_gravity="center_horizontal"-->
         <!--android:layout_weight="0.08" />-->
+    <Button
+        android:layout_width="85dp"
+        android:layout_height="74dp"
+        android:background = "@drawable/black_slr_camera_256"
+        android:id="@+id/camera_button"
+        android:layout_gravity="right" />
 
 </RelativeLayout >
