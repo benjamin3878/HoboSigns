@@ -18,5 +18,8 @@
     <string name="new_post_button">+</string>
     <string name="title_activity_maps">Map</string>
     <string name="post_drawing">Post</string>
+    <string name="title_activity_hobo_signs_view">HoboSignsView</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

@@ -1,19 +1,16 @@
 package course.example.ben.hobosigns;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -23,25 +20,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.CancelableCallback;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -54,6 +39,10 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -66,13 +55,26 @@ import java.util.Set;
  * Home is the main interaction with a user.
  * The user will view post of other user in the area via map or list mode
  */
-public class Home extends AppCompatActivity implements OnMapReadyCallback {
+public class Home extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     // The Map Object
     private GoogleMap mMap;
+    private HashMap<Marker, HoboSignsPost> markerToBitmap = new HashMap<Marker, HoboSignsPost>();
 
     private final double COLLEGE_PARK_LATITUDE = 38.9967;
     private final double COLLEGE_PARK_LONGITUDE = -76.9275;
+    private static final long ONE_MIN = 1000 * 60;
+    private static final long TWO_MIN = ONE_MIN * 2;
+    private static final long FIVE_MIN = ONE_MIN * 5;
+    private static final long MEASURE_TIME = 1000 * 30;
+    private static final long POLLING_FREQ = 1000 * 10;
+    private static final float MIN_ACCURACY = 25.0f;
+    private static final float MIN_LAST_READ_ACCURACY = 500.0f;
+    private static final float MIN_DISTANCE = 10.0f;
+    private static final float LOCATION_REFRESH_DISTANCE = 10.0f;
 
+    private Location mBestReading;
+    private LocationManager mLocationManager;
+    private LocationListener mLocationListener;
     private SupportMapFragment mapFragment;
     private LocationRequest locationRequest;
     private String TAG = "Testing HOME";
@@ -113,14 +115,15 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "FUCK ME");
+        Log.i(TAG, "TESTING - REQUESTCODE: " + requestCode + "RESULTCODE: " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 11) {
             if (resultCode == RESULT_OK) {
                 Log.i(TAG, "FILEPATH: " + data.getStringExtra("filePath"));
-//                BitmapDescriptor icon1 = BitmapDescriptorFactory.fromPath(data.getStringExtra("filePath"));
-//                mMap.addMarker(new MarkerOptions().position(generate()).title("generate").icon(icon1));
+                //Bitmap bm = BitmapFactory.decodeFile(data.getStringExtra("filePath"));
+                Marker markerToAdd = mMap.addMarker(new MarkerOptions().position(generate()).title("generate"));
                 submitSignToParse(data.getStringExtra("filePath"));
+                doMapQuery();
             }
         }
     }
@@ -137,7 +140,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.i(TAG, "Image failed to be saved!");
-                    Toast.makeText(getApplicationContext(), "Sign image failed to be saved", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "Sign image failed to be saved", Toast.LENGTH_LONG).show();
                 } else {
                     HoboSignsPost newPost = new HoboSignsPost();
                     newPost.setImageFile(photoFile);
@@ -148,10 +151,10 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
                         public void done(ParseException e) {
                             if (e != null) {
                                 Log.i(TAG, "ParseObject failed to submit!");
-                                Toast.makeText(getApplicationContext(), "Sign failed to submit", Toast.LENGTH_LONG);
+                                Toast.makeText(getApplicationContext(), "Sign failed to submit", Toast.LENGTH_LONG).show();
                             } else {
                                 Log.i(TAG, "ParseObject submitted!!");
-                                Toast.makeText(getApplicationContext(), "Sign submitted!", Toast.LENGTH_LONG);
+                                Toast.makeText(getApplicationContext(), "Sign submitted!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -199,32 +202,50 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
+//        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        map.setOnMarkerClickListener(this);
+//        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mBestReading = bestLastKnownLocation(MIN_LAST_READ_ACCURACY, FIVE_MIN);
         Location location;
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
+        if (null != mBestReading ) {
+            longitude = mBestReading.getLongitude();
+            latitude = mBestReading.getLatitude();
         } else {
             longitude = COLLEGE_PARK_LONGITUDE;
             latitude = COLLEGE_PARK_LATITUDE;
+            Log.i(TAG, "BEFORE THE TOAST MESSAGE");
+            Toast.makeText(getApplicationContext(), "No GPS Position", Toast.LENGTH_LONG).show();
         }
+
+//        if (Build.VERSION.SDK_INT >= 23 &&
+//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+//            if(mLocationManager != null){
+//                if((location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)) != null){
+//                    longitude = location.getLongitude();
+//                    latitude = location.getLatitude();
+//                }else{
+//                    Toast.makeText(this, "Use College Park as location", Toast.LENGTH_LONG).show();
+//                }
+//            }else{
+//                Toast.makeText(this, "mLocationManager == null", Toast.LENGTH_LONG).show();
+//            }
+//
+//        }else{
+//            Toast.makeText(this, "No Permissions", Toast.LENGTH_LONG).show();
+//        }
+
+
 
         geoPoint = new ParseGeoPoint(latitude, longitude);
 
 
         LatLng collegePark = new LatLng(latitude, longitude);
-        LatLng test = new LatLng(38.99, -76.82);
-        //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.test);
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.testing1);
         //BitmapDescriptor icon1 = BitmapDescriptorFactory.fromResource(R.drawable.test1);
-        map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
-        map.addMarker(new MarkerOptions().position(test).title("Test 1"));//.icon(icon1));
-        for (int i = 0; i < 10; i++) {
-            map.addMarker(new MarkerOptions().position(generate()).title("generate"));
-        }
+        //Marker collegeParkMarker = map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
+        //markerToBitmap.put(collegeParkMarker, bm);
         map.moveCamera(CameraUpdateFactory.newLatLng(collegePark));
         map.animateCamera(CameraUpdateFactory.zoomTo(10.0f));
         doMapQuery();
@@ -263,15 +284,27 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
                 // Loop through the results of the search
                 Log.i(TAG, objects.toString());
                 for (HoboSignsPost post : objects) {
+                    Log.i(TAG, post.getLocation().toString());
                     // Add this post to the list of map pins to keep
                     toKeep.add(post.getObjectId());
                     // Check for an existing marker for this post
                     Marker oldMarker = mapMarkers.get(post.getObjectId());
                     // Set up the map marker's location
                     MarkerOptions markerOpts = new MarkerOptions().position(new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude()));
-                    //BitmapDescriptorFactory.fromBitmap();
+
+                    /*
+                    ParseFile file = post.getImageFile();
+                    byte[] bitMapData = new byte[100];
+                    try {
+                        bitMapData = file.getData();
+                    } catch (ParseException p) {
+                        Log.i(TAG, "Error grabbing bitmap");
+                    }
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bitMapData, 0, bitMapData.length);
+                    */
                     // Add a new marker
                     Marker marker = mapFragment.getMap().addMarker(markerOpts);
+                    markerToBitmap.put(marker, post);
                 }
             }
         });
@@ -300,6 +333,7 @@ private final LocationListener locationListener = new LocationListener() {
     @Override
     protected void onResume() {
         super.onResume();
+        doMapQuery();
         /*
         if(paused) {
             //setContentView(R.layout.home);
@@ -326,8 +360,74 @@ private final LocationListener locationListener = new LocationListener() {
         */
     }
 
+    public boolean onMarkerClick(final Marker marker) {
+        Intent intent = new Intent(Home.this, HoboSignsView.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Log.i(TAG, markerToBitmap.get(marker).toString());
+
+        // Store image in memory before starting new activity to view
+        intent.putExtra("bitmap", markerToBitmap.get(marker).getObjectId());
+        startActivity(intent);
+        return true;
+    }
+
+    // Code from https://guides.codepath.com/android/Accessing-the-Camera-and-Stored-Media
+    // Returns the Uri for a photo stored on disk given the fileName
+    public Uri getPhotoFileUri(String fileName) {
+        return Uri.fromFile(getPhotoFile(fileName));
+    }
+
+    public File getPhotoFile(String fileName) {
+        // Only continue if the SD Card is mounted
+        if (isExternalStorageAvailable()) {
+            // Get safe storage directory for photos
+            File mediaStorageDir = new File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), TAG);
+
+            // Create the storage directory if it does not exist
+            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+                Log.d(TAG, "failed to create directory");
+            }
+
+            // Return the file target for the photo based on filename
+            return new File(mediaStorageDir.getPath() + File.separator + fileName);
+        }
+        return null;
+    }
+
+    private boolean isExternalStorageAvailable() {
+        String state = Environment.getExternalStorageState();
+        if (state.equals(Environment.MEDIA_MOUNTED)) {
+            return true;
+        }
+        return false;
+    }
+
+    private String saveDrawing(Bitmap image) {
+        Log.i(TAG, "Posting drawing!");
+        FileOutputStream imageOutputStream;
+
+        try {
+            imageOutputStream = new FileOutputStream(getPhotoFile("tempSignImage"));
+            image.compress(Bitmap.CompressFormat.PNG, 100, imageOutputStream);
+            return getPhotoFileUri("tempSignImage").getPath();
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "NullPointerException");
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "FileNotFoundException");
+        } catch (IOException e) {
+            Toast.makeText(this, "Image could not be saved", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "IOException");
+        }
+
+        return null;
+    }
+
     @Override
-    protected void onPostResume() {
+    protected void onPostResume(){
         super.onPostResume();
     }
 
@@ -335,5 +435,46 @@ private final LocationListener locationListener = new LocationListener() {
     public void onBackPressed() {
         moveTaskToBack(true);
     }
+
+
+    private Location bestLastKnownLocation(float minAccuracy, long maxAge) {
+
+        Location bestResult = null;
+        float bestAccuracy = Float.MAX_VALUE;
+        long bestAge = Long.MIN_VALUE;
+
+        List<String> matchingProviders = mLocationManager.getAllProviders();
+
+        for (String provider : matchingProviders) {
+
+            Location location;
+            if(ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED){
+                location = mLocationManager.getLastKnownLocation(provider);
+            }else{
+                //error user has bloacked gps location
+                Toast.makeText(getApplicationContext(), "Please give this application GPS Permission", Toast.LENGTH_LONG).show();
+                return null;
+            }
+            if (location != null) {
+                float accuracy = location.getAccuracy();
+                long time = location.getTime();
+
+                if (accuracy < bestAccuracy) {
+                    bestResult = location;
+                    bestAccuracy = accuracy;
+                    bestAge = time;
+                }
+            }
+        }
+
+        // Return best reading or null
+        if (bestAccuracy > minAccuracy
+                || (System.currentTimeMillis() - bestAge) > maxAge) {
+            return null;
+        } else {
+            return bestResult;
+        }
+    }
+
 
 }
