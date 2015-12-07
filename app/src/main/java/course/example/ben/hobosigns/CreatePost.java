@@ -12,6 +12,8 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -95,7 +97,7 @@ public class CreatePost extends AppCompatActivity {
 
         setContentView(R.layout.create_post);
 
-        dialog = new ColorPickerDialog(CreatePost.this, new OnColorChangedListener(), 0);
+        dialog = new ColorPickerDialog(CreatePost.this, new OnColorChangedListener(), Color.TRANSPARENT);
         //dialog.show();
 
         Button colorPickButton = (Button) findViewById(R.id.color_button);
@@ -104,6 +106,7 @@ public class CreatePost extends AppCompatActivity {
             public void onClick(View v) {
 
                 dialog.show();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
             }
         });
 
@@ -123,7 +126,7 @@ public class CreatePost extends AppCompatActivity {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
-        mPaint.setStrokeWidth(12);
+        mPaint.setStrokeWidth(24);
         dv.mPaint = this.mPaint;
 
 
@@ -246,11 +249,14 @@ public class CreatePost extends AppCompatActivity {
                 mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 mPaint.setShader(s);
                 mPaint.setStyle(Paint.Style.STROKE);
-                mPaint.setStrokeWidth(32);
+                mPaint.setStrokeWidth(50);
 
                 mCenterPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 mCenterPaint.setColor(color);
                 mCenterPaint.setStrokeWidth(5);
+
+//                this.setBackgroundColor(Color.TRANSPARENT);
+//                this.setBackground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
             }
 
             private boolean mTrackingCenter;
@@ -258,7 +264,7 @@ public class CreatePost extends AppCompatActivity {
 
             @Override
             protected void onDraw(Canvas canvas) {
-                float r = CENTER_X - mPaint.getStrokeWidth()*0.5f;
+                float r = CENTER_X - mPaint.getStrokeWidth() * 0.5f;
 
                 canvas.translate(CENTER_X, CENTER_X);
 
@@ -288,9 +294,9 @@ public class CreatePost extends AppCompatActivity {
                 setMeasuredDimension(CENTER_X*2, CENTER_Y*2);
             }
 
-            private static final int CENTER_X = 100;
-            private static final int CENTER_Y = 100;
-            private static final int CENTER_RADIUS = 32;
+            private static final int CENTER_X = 200;
+            private static final int CENTER_Y = 200;
+            private static final int CENTER_RADIUS = 100;
 
             private int floatToByte(float x) {
                 int n = java.lang.Math.round(x);
