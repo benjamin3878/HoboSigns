@@ -8,7 +8,7 @@
     android:background="#000"
     android:weightSum="1">
 
-    <View class="course.example.ben.hobosigns.CreatePost.DrawingView"
+    <course.example.ben.hobosigns.DrawingView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/drawingView"/>
