@@ -247,7 +247,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
         //Marker collegeParkMarker = map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
         //markerToBitmap.put(collegeParkMarker, bm);
         map.moveCamera(CameraUpdateFactory.newLatLng(collegePark));
-        map.animateCamera(CameraUpdateFactory.zoomTo(10.0f));
+        map.animateCamera(CameraUpdateFactory.zoomTo(20.0f));
         doMapQuery();
     }
 
