@@ -5,8 +5,13 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#000"
+    android:background="#fff"
     android:weightSum="1">
+
+    <course.example.ben.hobosigns.DrawingView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/drawingView"/>
 
 
     <!--<TextView-->
@@ -17,5 +22,11 @@
         <!--android:id="@+id/textView7"-->
         <!--android:layout_gravity="center_horizontal"-->
         <!--android:layout_weight="0.08" />-->
+    <Button
+        android:layout_width="85dp"
+        android:layout_height="74dp"
+        android:background = "@drawable/colorpicker"
+        android:id="@+id/color_button"
+        android:layout_gravity="right" />
 
 </RelativeLayout >
