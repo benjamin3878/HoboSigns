@@ -200,6 +200,17 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
         return new LatLng(38.99 + xDis, -76.95 + yDis);
     }
 
+    private void generateGPSOffset() {
+        Random rn = new Random();
+        float xDis = rn.nextFloat() / 100;
+        float yDis = rn.nextFloat() / 100;
+//        Log.i(TAG, "GEN X: " + xDis);
+//        Log.i(TAG, "GEN Y: " + yDis);
+        this.longitude += xDis;
+        this.latitude += yDis;
+//        return new LatLng(38.99 + xDis, -76.95 + yDis);
+    }
+
     @Override
     public void onMapReady(GoogleMap map) {
 //        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -214,6 +225,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
         } else {
             longitude = COLLEGE_PARK_LONGITUDE;
             latitude = COLLEGE_PARK_LATITUDE;
+            generateGPSOffset();//make fake gps to run in Android Studio
             Log.i(TAG, "BEFORE THE TOAST MESSAGE");
             Toast.makeText(getApplicationContext(), "No GPS Position", Toast.LENGTH_LONG).show();
         }
@@ -242,7 +254,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback, Googl
 
 
         LatLng collegePark = new LatLng(latitude, longitude);
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.testing1);
+//        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.testing1);
         //BitmapDescriptor icon1 = BitmapDescriptorFactory.fromResource(R.drawable.test1);
         //Marker collegeParkMarker = map.addMarker(new MarkerOptions().position(collegePark).title("Test Marker"));//.icon(icon));
         //markerToBitmap.put(collegeParkMarker, bm);

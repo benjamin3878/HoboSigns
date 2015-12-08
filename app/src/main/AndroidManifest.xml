@@ -30,7 +30,7 @@
     -->
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_round"
+        android:icon="@drawable/citynight_roundcorners"
         android:label="@string/app_name"
         android:logo="@drawable/logout"
         android:theme="@style/AppTheme"
